@@ -11,6 +11,9 @@ var KEY_RIGHT = 39;
 var KEY_DOWN = 40;
 
 var keysDown = {};
+var wasPressed1 = {};
+var wasPressed2 = {};
+var wasPressedSolo = {};
 addEventListener("keydown", function(e) {
   //console.log("keydown '" + e.keyCode + "'");
   if(e.keyCode == KEY_SPACE) {

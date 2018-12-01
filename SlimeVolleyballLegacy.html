@@ -211,7 +211,7 @@ var GAME_STATE_SHOW_WINNER = 5;
       s.velocityY = 31;
     }
   }
-  function updateSlimeVelocitiesWithKeys(s,left,right,up) {
+  function updateSlimeVelocitiesWithKeys(s,left,right,up,down,is2) {
     // update velocities
     if(keysDown[left]) {
       if(keysDown[right]) {
@@ -225,10 +225,47 @@ var GAME_STATE_SHOW_WINNER = 5;
       s.velocityX = 0;
     }
     if(s.y == 0 && keysDown[up]) {
-      s.velocityY = 31;
+      if (is2){
+        if(!wasPressed2[up]){
+          s.velocityY = 35;
+        }
+        wasPressed2[up] = true;
+      } else {
+        if(!wasPressed1[up]){
+          s.velocityY = 35;
+        }
+        wasPressed1[up] = true;
+      }
+    }
+    if(s.y != 0 && keysDown[down] && s.velocityY <= 7){
+      if (is2){
+        if(!wasPressed2[down]){
+          s.velocityY = -45
+        }
+        wasPressed2[down] = true;
+      } else {
+        if(!wasPressed1[down]){
+          s.velocityY = -45
+        }
+        wasPressed1[down] = true;
+      }
+    }
+    if (!keysDown[down]){
+      if(is2){
+        wasPressed2[down] = false;
+      } else {
+        wasPressed1[down] = false;
+      }
+    }
+    if (!keysDown[up]){
+      if(is2){
+        wasPressed2[up] = false;
+      } else {
+        wasPressed1[up] = false;
+      }
     }
   }
-  function updateSlimeVelocitiesWithDoubleKeys(s,left1,left2,right1,right2,up1,up2) {
+  function updateSlimeVelocitiesWithDoubleKeys(s,left1,left2,right1,right2,up1,up2,down1,down2) {
     // update velocities
     if(keysDown[left1] || keysDown[left2]) {
       if(keysDown[right1] || keysDown[right2]) {
@@ -243,6 +280,9 @@ var GAME_STATE_SHOW_WINNER = 5;
     }
     if(s.y == 0 && (keysDown[up1] || keysDown[up2])) {
       s.velocityY = 31;
+    }
+    if(s.y != 0 && (keysDown[down1] || keysDown[down2]) && s.velocityY <= 7) {
+      s.velocityY = -45;
     }
   }
   function updateSlime(s, leftLimit, rightLimit) {
@@ -370,11 +410,12 @@ var GAME_STATE_SHOW_WINNER = 5;
       updateSlimeVelocitiesWithDoubleKeys(slimeLeft,
         KEY_A,KEY_LEFT,
         KEY_D,KEY_RIGHT,
-        KEY_W,KEY_UP);
+        KEY_W,KEY_UP,
+        KEY_S,KEY_DOWN);
       updateSlimeVelocities(slimeRight,slimeAI.movement,slimeAI.jumpSet);
     } else {
-      updateSlimeVelocitiesWithKeys(slimeLeft, KEY_A,KEY_D,KEY_W);
-      updateSlimeVelocitiesWithKeys(slimeRight, KEY_LEFT,KEY_RIGHT,KEY_UP);
+      updateSlimeVelocitiesWithKeys(slimeLeft, KEY_A,KEY_D,KEY_W,KEY_S,false);
+      updateSlimeVelocitiesWithKeys(slimeRight, KEY_LEFT,KEY_RIGHT,KEY_UP,KEY_DOWN,true);
     }
 
     updateSlime(slimeLeft, 50 , 445);
@@ -543,6 +584,7 @@ var GAME_STATE_SHOW_WINNER = 5;
       keysDown[KEY_UP] = false;
       keysDown[KEY_RIGHT] = false;
       keysDown[KEY_LEFT] = false;
+      keysDown[KEY_DOWN] = false;
     }
 
     if(slimeLeftScore >= WIN_AMOUNT) {
