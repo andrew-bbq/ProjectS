@@ -635,7 +635,7 @@ var GAME_STATE_SHOW_WINNER = 5;
     menuDiv.style.width  = '750px';
     menuDiv.style.height = '375px';
 
-    menuDiv.style.background = "#ca6 url('sky2.jpg') no-repeat";
+    menuDiv.style.background = "#ca6 url('projectS-home.jpg') no-repeat";
     contentDiv.appendChild(menuDiv);
 
     // Create options menu div
@@ -653,7 +653,7 @@ var GAME_STATE_SHOW_WINNER = 5;
     slimeRight = newLegacySlime(false,100,'#f00');
 
     var localSkyImage = new Image();
-    localSkyImage.src = 'sky2.jpg';
+    localSkyImage.src = 'projectS-home.jpg';
     localSkyImage.onload = function() {
       backImages['sky'] = this;
     }
@@ -738,12 +738,9 @@ var GAME_STATE_SHOW_WINNER = 5;
   }
   function toInitialMenu() {
     menuDiv.innerHTML = '<div style="text-align:center;">' +
-      '<h1 style="margin-top:30px;">Slime Volleyball</h1>' +
-      '<span onclick="start(true)" class="btn" style="display:inline-block;margin:20px 30px 20px 30px;font-size:40px;">One Player</span>' +
-      '<span onclick="start(false)" class="btn" style="display:inline-block;margin:20px 30px 20px 30px;font-size:40px;">Two Player</span>' +
-      '<p>Originally written by Quin Pendragon and Daniel Wedge (http://oneslime.net)<br/>' +
-      'Rewritten by Jonathan Marler and ' +
-      'modified by Andrew Bennett</p>'
+      '<image src="ProjectS.png" style="margin-top:25px;" width="500px"/>' +
+      '<span onclick="start(true)" class="btn" style="font-family:Russo One; display:inline-block;margin:20px 30px 20px 30px;font-size:40px;">One Player</span>' +
+      '<span onclick="start(false)" class="btn" style="font-family:Russo One; display:inline-block;margin:20px 30px 20px 30px;font-size:40px;">Two Player</span>' +
       '</div>';
   }
   function loadOptions() {
