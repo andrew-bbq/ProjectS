@@ -1,4 +1,5 @@
 // GAME STATE CONSTANTS
+var GAME_STATE_MAIN_MENU = 0;
 var GAME_STATE_RUNNING = 1;
 var GAME_STATE_POINT_PAUSE = 2;
 var GAME_STATE_MENU_PAUSE = 3;
@@ -557,6 +558,8 @@ function bodyload() {
  * Update menu div's contents for main menu
  */
 function toInitialMenu() {
+    gameState = GAME_STATE_MAIN_MENU;
+    menuDiv.style.display = 'block';
     menuDiv.innerHTML = '<div style="text-align:center;">' +
         '<image src="ProjectS.png" style="margin-top:25px;" width="500px"/>' +
         '<span onclick="start(true)" class="btn" style="font-family:Russo One; display:inline-block;margin:20px 30px 20px 30px;font-size:40px;">One Player</span>' +
@@ -581,7 +584,6 @@ function start() {
 
     updatesToPaint = 0;
     updateCount = 0;
-    loadOptions();
     gameState = GAME_STATE_RUNNING
     renderBackground(); // clear the field
     canvas.style.display = 'block';
@@ -589,15 +591,6 @@ function start() {
     gameIntervalObject = setInterval(gameIteration, 20);
 }
 
-function loadOptions() {
-    legacyGraphics = document.getElementById('LegacyGraphics').checked;
-    slowMotion = document.getElementById('SlowMotion').checked;
-    if (document.getElementById('PhysicsLog').checked) {
-        physicsLog = 120;
-    } else {
-        physicsLog = 0;
-    }
-}
 function showOptions() {
     if (gameState == GAME_STATE_RUNNING) {
         gameState = GAME_STATE_MENU_PAUSE;
@@ -616,5 +609,4 @@ function hideOptions() {
     } else if (gameState == GAME_STATE_MENU_PAUSE_BETWEEN_POINTS) {
         startNextPoint();
     }
-    loadOptions();
 }
