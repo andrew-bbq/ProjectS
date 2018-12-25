@@ -46,8 +46,8 @@ var slimeLeft;
 var slimeRight;
 var slimeLeftScore;
 var slimeRightScore;
-var slimeLeftColor = "#0f0";
-var slimeRightColor = "#f00";
+var slimeLeftColor = "#00ff00";
+var slimeRightColor = "#ff0000";
 var updateCount; // RESET every time GAME_STATE_RUNNING is set
 var leftWon;
 var leftReady;
@@ -398,14 +398,23 @@ function gameIteration() {
 function readyUp(is2) {
     if (gameState == GAME_STATE_SHOW_WINNER) {
         if (is2) {
+            menuDiv.innerHTML += '<br /><span style="color:'+slimeRightColor+';">PLAYER 2 IS READY!</span>';
             rightReady = true;
+
         } else {
+            menuDiv.innerHTML += '<br /><span style="color:'+slimeLeftColor+';">PLAYER 1 IS READY!</span>';
             leftReady = true;
+
         }
-        if(leftReady && rightReady){
-            leftReady = false;
-            rightReady = false;
-            start();
+        if (leftReady && rightReady) {
+
+            setTimeout(function () {
+                if (gameState == GAME_STATE_SHOW_WINNER) {            
+                    leftReady = false;
+                    rightReady = false;
+                    start();
+                }
+            }, 600);
         }
     }
 }
@@ -561,20 +570,39 @@ function toInitialMenu() {
     gameState = GAME_STATE_MAIN_MENU;
     menuDiv.style.display = 'block';
     menuDiv.innerHTML = '<div style="text-align:center;">' +
-        '<image src="ProjectS.png" style="margin-top:25px;" width="500px"/>' +
-        '<span onclick="start(true)" class="btn" style="font-family:Russo One; display:inline-block;margin:20px 30px 20px 30px;font-size:40px;">One Player</span>' +
-        '<span onclick="start(false)" class="btn" style="font-family:Russo One; display:inline-block;margin:20px 30px 20px 30px;font-size:40px;">Two Player</span>' +
+        '<image src="ProjectS.png" style="margin-top:25px;" width="500px"/><br />' +
+        '<span onclick="toSetupMenu()" class="btn mainButton">Start</span>' +
         '</div>';
+}
+
+function toSetupMenu() {
+    menuDiv.innerHTML = '<div class="setupText secondPage text-left"><div class="setupText" style="margin-left:100px;">' +
+        'Left slime color: <input id="LeftColor" type="color" style="height:25px; width:25px;" value="' + slimeLeftColor + '" /><br /><br />' +
+        'Right slime color: <input id="RightColor" type="color" style="height:25px; width:25px;" value="' + slimeRightColor + '" /></div><br />' +
+        '<br/><div class="text-center setupText">Best of: <br />' +
+        '<span onclick="initialGame(1)" class="btn mainButton">1</span>' +
+        '<span onclick="initialGame(2)" class="btn mainButton">3</span>' +
+        '<span onclick="initialGame(3)" class="btn mainButton">5</span>' +
+        '<span onclick="initialGame(4)" class="btn mainButton">7</span>' +
+        '</div></div>';
 }
 
 // ------------- MENU FUNCTIONS ----------------------------------------------------------------------------
 
+function initialGame(toWin) {
+    firstTo = toWin;
+    slimeLeftColor = document.getElementById('LeftColor').value;
+    slimeLeft.color = slimeLeftColor;
+    slimeRightColor = document.getElementById('RightColor').value;
+    slimeRight.color = slimeRightColor;
+    start()
+}
 function start() {
     slimeLeftScore = 0;
     slimeRightScore = 0;
 
     skyColor = '#00f';
-    backImage = backImages['sky'];
+    backImage = backImages['main'];
     backTextColor = '#000';
     groundColor = '#888';
     ballColor = '#fff';

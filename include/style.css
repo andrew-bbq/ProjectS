@@ -42,3 +42,22 @@ h2 {margin: 8px 0;}
 input[type='checkbox'] {
   margin-right: 1em;
 }
+.setupText {
+  color: white;
+  font-family:Russo One;
+}
+.mainButton {
+  font-family:Russo One;
+  display:inline-block;
+  margin:20px 30px 20px 30px;
+  font-size:40px;
+}
+.secondPage {
+  padding:60px 40px 40px 40px;
+}
+.text-center{
+  text-align:center;
+}
+.text-left{
+  text-align:left;
+}
