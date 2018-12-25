@@ -46,9 +46,14 @@ var slimeRight;
 var slimeLeftScore;
 var slimeRightScore;
 var slimeLeftColor = "#0f0";
-var slimeRightColor = "f00";
+var slimeRightColor = "#f00";
 var updateCount; // RESET every time GAME_STATE_RUNNING is set
 var leftWon;
+var leftReady;
+var rightReady;
+var leftGames = 0;
+var rightGames = 0;
+var firstTo = 2;
 
 // Objects rendered in the slime engine
 // need an x and a y parameter
@@ -203,11 +208,6 @@ function collisionBallSlime(slime) {
         ball.y = slime.y + Math.trunc((slime.radius + ball.radius) * dy / dist);
 
         var something = Math.trunc((dx * dVelocityX + dy * dVelocityY) / dist);
-        if (physicsLog > 0) {
-            log(" newBallX  " + ball.x);
-            log(" newBallY  " + ball.y);
-            log(" something " + something);
-        }
 
         if (something <= 0) {
             ball.velocityX += Math.trunc(slime.velocityX - 2 * dx * something / dist);
@@ -216,10 +216,6 @@ function collisionBallSlime(slime) {
             else if (ball.velocityX > MAX_VELOCITY_X) ball.velocityX = MAX_VELOCITY_X;
             if (ball.velocityY < -MAX_VELOCITY_Y) ball.velocityY = -MAX_VELOCITY_Y;
             else if (ball.velocityY > MAX_VELOCITY_Y) ball.velocityY = MAX_VELOCITY_Y;
-            if (physicsLog > 0) {
-                log(" ballVX    " + ball.velocityX);
-                log(" ballVY    " + ball.velocityY);
-            }
         }
     }
 }
@@ -299,24 +295,27 @@ function updateFrame() {
 /**
  * Render circles representing points scored
  * @param {int} score of player to render
+ * @param {int} total number of games required to win
  * @param {int} initialX initial X position to start rendering from
+ * @param {int} initialY level to place points on (lower for sets)
  * @param {int} xDiff space between circles
+ * @param {string} color color of points to display
  */
-function renderPoints(score, initialX, xDiff) {
-    ctx.fillStyle = '#ff0';
+function renderPoints(score, total, initialX, initialY, xDiff, color) {
+    ctx.fillStyle = color;
     var x = initialX;
     for (var i = 0; i < score; i++) {
         ctx.beginPath();
-        ctx.arc(x, 25, 12, 0, TWO_PI);
+        ctx.arc(x, initialY, 12, 0, TWO_PI);
         ctx.fill();
         x += xDiff;
     }
     ctx.strokeStyle = backTextColor;
     ctx.lineWidth = 2;
     x = initialX;
-    for (var i = 0; i < WIN_AMOUNT; i++) {
+    for (var i = 0; i < total; i++) {
         ctx.beginPath();
-        ctx.arc(x, 25, 12, 0, TWO_PI);
+        ctx.arc(x, initialY, 12, 0, TWO_PI);
         ctx.stroke();
         x += xDiff;
     }
@@ -333,8 +332,12 @@ function renderBackground() {
     ctx.fillStyle = '#fff'
     ctx.fillRect(viewWidth / 2 - 2, 7 * viewHeight / 10, 4, viewHeight / 10 + 5);
     // render scores
-    renderPoints(slimeLeftScore, 30, 40);
-    renderPoints(slimeRightScore, viewWidth - 30, -40);
+    renderPoints(slimeLeftScore, WIN_AMOUNT, 30, 25, 40, '#ff0');
+    renderPoints(slimeRightScore, WIN_AMOUNT, viewWidth - 30, 25, -40, '#ff0');
+
+    // render set score
+    renderPoints(leftGames, firstTo, 30, 65, 40, slimeLeftColor);
+    renderPoints(rightGames, firstTo, viewWidth - 30, 65, -40, slimeRightColor);
 }
 
 // ------- GAME CODE  ------------------------------------------------------------------------------------
@@ -388,15 +391,37 @@ function gameIteration() {
 }
 
 /**
+ * Handle restarting game
+ * @param {boolean} is2 true if right slime false if left
+ */
+function readyUp(is2) {
+    if (gameState == GAME_STATE_SHOW_WINNER) {
+        if (is2) {
+            rightReady = true;
+        } else {
+            leftReady = true;
+        }
+        if(leftReady && rightReady){
+            leftReady = false;
+            rightReady = false;
+            start();
+        }
+    }
+}
+
+
+/**
  * Display winner of previous match, set new game state
  */
 function endMatch() {
     gameState = GAME_STATE_SHOW_WINNER;
     clearInterval(gameIntervalObject);
+    leftWon ? leftGames++ : rightGames++;
     menuDiv.innerHTML = '<div style="text-align:center;">' +
         '<h1 style="margin:50px 0 20px 0;">Player ' + (leftWon ? '1' : '2') + ' Wins!</h1>' +
-        "Press 'space' for rematch..." +
+        "Press 'down' to ready for next game" +
         '</div>';
+
     menuDiv.style.display = 'block';
     canvas.style.display = 'none';
 }
@@ -539,45 +564,17 @@ function toInitialMenu() {
         '</div>';
 }
 
-// Menu Functions
-function start(startAsOnePlayer) {
-    onePlayer = startAsOnePlayer;
-
-    slimeLeftScore = 0;
-    slimeRightScore = 0;
-
-    legacySkyColor = '#00f';
-    backImage = backImages['sky'];
-    backTextColor = '#000';
-    legacyGroundColor = '#888';
-    legacyBallColor = '#fff';
-    newGroundColor = '#ca6';
-
-    slimeAI = null;
-
-    initRound(true);
-
-    updatesToPaint = 0;
-    updateCount = 0;
-    loadOptions();
-    gameState = GAME_STATE_RUNNING
-    renderBackground(); // clear the field
-    canvas.style.display = 'block';
-    menuDiv.style.display = 'none';
-    gameIntervalObject = setInterval(gameIteration, 20);
-}
-
 // ------------- MENU FUNCTIONS ----------------------------------------------------------------------------
 
 function start() {
     slimeLeftScore = 0;
     slimeRightScore = 0;
 
-    legacySkyColor = '#00f';
+    skyColor = '#00f';
     backImage = backImages['sky'];
     backTextColor = '#000';
-    legacyGroundColor = '#888';
-    legacyBallColor = '#fff';
+    groundColor = '#888';
+    ballColor = '#fff';
     newGroundColor = '#ca6';
 
     initRound(true);
