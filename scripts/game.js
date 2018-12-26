@@ -8,8 +8,8 @@ var GAME_STATE_SHOW_WINNER = 5;
 var GAME_STATE_COLOR_SELECT = 6;
 
 // MAX VELOCITY CONSTANTS
-var MAX_VELOCITY_X = 18; //15 by default
-var MAX_VELOCITY_Y = 25; //22 by default
+var MAX_VELOCITY_X = 15; //15 by default
+var MAX_VELOCITY_Y = 22; //22 by default
 
 // STANDARD CONSTANTS
 var TWO_PI = Math.PI * 2;
